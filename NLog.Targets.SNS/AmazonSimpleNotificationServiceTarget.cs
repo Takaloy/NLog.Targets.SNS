@@ -13,12 +13,15 @@ namespace NLog.Targets.SNS
         {
             _awsCredentialResolver = new AwsCredentialResolver();
         }
-
-        [RequiredParameter]
+        
         public string TopicArn { get; set; }
 
         [RequiredParameter]
         public string AmazonCredentialType { get; set; }
+
+        public string AccountNumber { get; set; }
+
+        public string Topic { get; set; }
 
         [RequiredParameter]
         public string RegionEndPoint { get; set; }
@@ -27,7 +30,15 @@ namespace NLog.Targets.SNS
         {
             base.InitializeTarget();
             var credential = _awsCredentialResolver.ResolveFor(AmazonCredentialType);
-            _messageDespatcher = new MessageDespatcher(TopicArn, credential, RegionEndPoint);
+            _messageDespatcher = new MessageDespatcher(GetTopicArn(), credential, RegionEndPoint);
+        }
+
+        private string GetTopicArn()
+        {
+            if (!string.IsNullOrEmpty(TopicArn))
+                return TopicArn;
+
+            return $"arn:aws:sns:{RegionEndPoint}:{AccountNumber}:{Topic}";
         }
 
         protected override void Write(LogEventInfo logEvent)
