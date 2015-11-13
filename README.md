@@ -5,7 +5,6 @@ NLog target for Amazon SNS
 
 specify topic arn explicitly
 
-
 ```json
 <target xsi:type="SNS" 
             name="s" 
@@ -28,5 +27,18 @@ $"arn:aws:sns:{RegionEndPoint}:{AccountNumber}:{Topic}"
             AccountNumber="{your-account-number}"
             Topic="{your-topic}"
             AmazonCredentialType="Amazon.Runtime.StoredProfileAWSCredentials, AWSSDK"
+            layout="${message}"/>
+```
+
+basic aws credentials with accesskey and secretkey
+
+```json
+<target xsi:type="SNS"
+            name="s"
+            RegionEndpoint ="eu-west-1"
+            AccountNumber="{your-account-number}"
+            Topic="{your-topic}"
+			AccessKey="{your-access-key}"
+			SecretKey="{your-secret-key}"
             layout="${message}"/>
 ```
