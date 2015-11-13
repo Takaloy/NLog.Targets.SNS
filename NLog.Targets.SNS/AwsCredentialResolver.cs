@@ -3,14 +3,14 @@ using Amazon.Runtime;
 
 namespace NLog.Targets.SNS
 {
-    public interface IAwsCredentialResolver
+    internal interface IAwsCredentialResolver
     {
-        AWSCredentials ResolveFor(string credentialTypeString);
+        AWSCredentials ResolveFor(string credentialTypeString, string accessKey, string secretKey);
     }
 
-    public class AwsCredentialResolver: IAwsCredentialResolver
+    internal class AwsCredentialResolver: IAwsCredentialResolver
     {
-        public AWSCredentials ResolveFor(string credentialTypeString)
+        public AWSCredentials ResolveFor(string credentialTypeString, string accessKey, string secretKey)
         {
             Type credentialType = null;
 
@@ -19,6 +19,9 @@ namespace NLog.Targets.SNS
 
             if (credentialType == null)
                 credentialType = typeof (BasicAWSCredentials);
+
+            if (!string.IsNullOrEmpty(accessKey) && !string.IsNullOrEmpty(secretKey) && credentialType == typeof(BasicAWSCredentials))
+                return new BasicAWSCredentials(accessKey,secretKey);
 
             return (AWSCredentials) Activator.CreateInstance(credentialType);
         }

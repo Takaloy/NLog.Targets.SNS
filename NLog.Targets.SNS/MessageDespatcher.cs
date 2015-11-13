@@ -6,12 +6,12 @@ using Amazon.SimpleNotificationService.Model;
 
 namespace NLog.Targets.SNS
 {
-    public interface IMessageDespatcher
+    internal interface IMessageDespatcher
     {
         Task<PublishResponse> DespatchAsync(string message);
     }
 
-    public class MessageDespatcher : IMessageDespatcher
+    internal class MessageDespatcher : IMessageDespatcher
     {
         private readonly string _topicArn;
         private readonly AWSCredentials _credentials;

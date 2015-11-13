@@ -15,13 +15,16 @@ namespace NLog.Targets.SNS
         }
         
         public string TopicArn { get; set; }
-
-        [RequiredParameter]
+        
         public string AmazonCredentialType { get; set; }
 
         public string AccountNumber { get; set; }
 
         public string Topic { get; set; }
+
+        public string AccessKey { get; set; }
+
+        public string SecretKey { get; set; }
 
         [RequiredParameter]
         public string RegionEndPoint { get; set; }
@@ -29,7 +32,7 @@ namespace NLog.Targets.SNS
         protected override void InitializeTarget()
         {
             base.InitializeTarget();
-            var credential = _awsCredentialResolver.ResolveFor(AmazonCredentialType);
+            var credential = _awsCredentialResolver.ResolveFor(AmazonCredentialType, AccessKey, SecretKey);
             _messageDespatcher = new MessageDespatcher(GetTopicArn(), credential, RegionEndPoint);
         }
 
