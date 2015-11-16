@@ -24,8 +24,7 @@ namespace NLog.Targets.SNS
 
         public MessageDespatcher(AWSCredentials credentials, string regionEndpointString)
         {
-            _client = new AmazonSimpleNotificationServiceClient(credentials, 
-                RegionEndpoint.GetBySystemName(regionEndpointString));
+            _client = new AmazonSimpleNotificationServiceClient(credentials, RegionEndpoint.GetBySystemName(regionEndpointString));
         }
 
         public async Task<PublishResponse> DespatchAsync(string topicArn, string message)
@@ -34,7 +33,6 @@ namespace NLog.Targets.SNS
             {
                 return new PublishResponse(); //do not proceed
             }
-
 
             var request = new PublishRequest(topicArn, message);
             var response = await _client.PublishAsync(request);

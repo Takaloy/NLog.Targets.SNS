@@ -1,5 +1,9 @@
 # NLog.Targets.SNS
-NLog target for Amazon SNS 
+NLog target for Amazon SNS. This target will publish to specified Amazon SNS. For more information about Targets, read [here](https://github.com/NLog/NLog/wiki/Targets "NLog Targets").
+
+
+License: [MIT](https://opensource.org/licenses/MIT "MIT License").
+
 
 ### Example Config
 
@@ -40,7 +44,6 @@ posting from and to the same aws, specifying account number is optional. target 
             layout="${message}"/>
 ```
 
-
 basic aws credentials with accesskey and secretkey
 
 ```json
@@ -53,3 +56,5 @@ basic aws credentials with accesskey and secretkey
 			SecretKey="{your-secret-key}"
             layout="${message}"/>
 ```
+
+

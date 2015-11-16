@@ -55,6 +55,9 @@ namespace NLog.Targets.SNS
             if (_messageDespatcher == null)
                 throw new ArgumentNullException(nameof(_messageDespatcher));
 
+            if (logEvent?.LoggerName?.Equals("Amazon", StringComparison.InvariantCultureIgnoreCase) ?? false)   //prevent an infinite loop
+                return;
+
             var message = Layout.Render(logEvent);
             _messageDespatcher.DespatchAsync(GetTopicArn(), message).ConfigureAwait(false).GetAwaiter().GetResult();
         }
