@@ -33,13 +33,19 @@ namespace NLog.Targets.SNS
         {
             base.InitializeTarget();
             var credential = _awsCredentialResolver.ResolveFor(AmazonCredentialType, AccessKey, SecretKey);
-            _messageDespatcher = new MessageDespatcher(GetTopicArn(), credential, RegionEndPoint);
+            _messageDespatcher = new MessageDespatcher(credential, RegionEndPoint);
         }
 
         private string GetTopicArn()
         {
             if (!string.IsNullOrEmpty(TopicArn))
                 return TopicArn;
+
+            if (string.IsNullOrEmpty(Topic))
+                return null;
+
+            if (string.IsNullOrEmpty(AccountNumber))
+                return _messageDespatcher.GetTopicArnFor(Topic);
 
             return $"arn:aws:sns:{RegionEndPoint}:{AccountNumber}:{Topic}";
         }
@@ -50,7 +56,7 @@ namespace NLog.Targets.SNS
                 throw new ArgumentNullException(nameof(_messageDespatcher));
 
             var message = Layout.Render(logEvent);
-            _messageDespatcher.DespatchAsync(message).ConfigureAwait(false).GetAwaiter().GetResult();
+            _messageDespatcher.DespatchAsync(GetTopicArn(), message).ConfigureAwait(false).GetAwaiter().GetResult();
         }
     }
 }
