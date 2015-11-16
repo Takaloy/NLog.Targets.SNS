@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Amazon;
 using Amazon.Runtime;
@@ -8,30 +9,55 @@ namespace NLog.Targets.SNS
 {
     internal interface IMessageDespatcher
     {
-        Task<PublishResponse> DespatchAsync(string message);
+        Task<PublishResponse> DespatchAsync(string topicArn, string message);
+        string GetTopicArnFor(string topicName);
     }
 
     internal class MessageDespatcher : IMessageDespatcher
     {
-        private readonly string _topicArn;
-        private readonly AWSCredentials _credentials;
-        private readonly string _regionEndpointString;
+        private readonly ConcurrentDictionary<string, string> _snsTopics =
+            new ConcurrentDictionary<string, string>();
 
-        public MessageDespatcher(string topicArn, AWSCredentials credentials, string regionEndpointString)
+        private readonly AWSCredentials _credentials;
+        private readonly RegionEndpoint _regionEndpoint;
+
+        public MessageDespatcher(AWSCredentials credentials, string regionEndpointString)
         {
-            _topicArn = topicArn;
             _credentials = credentials;
-            _regionEndpointString = regionEndpointString;
+            _regionEndpoint = RegionEndpoint.GetBySystemName(regionEndpointString);
         }
 
-        public async Task<PublishResponse> DespatchAsync(string message)
+        public async Task<PublishResponse> DespatchAsync(string topicArn, string message)
         {
-            var regionEndpoint = RegionEndpoint.GetBySystemName(_regionEndpointString);
-            using (var client = new AmazonSimpleNotificationServiceClient(_credentials, regionEndpoint))
+            if (string.IsNullOrEmpty(topicArn) || string.IsNullOrEmpty(message))
             {
-                var request = new PublishRequest(_topicArn, message);
+                return new PublishResponse(); //do not proceed
+            }
+
+            using (var client = new AmazonSimpleNotificationServiceClient(_credentials, _regionEndpoint))
+            {
+                var request = new PublishRequest(topicArn, message);
                 var response = await client.PublishAsync(request);
                 return response;
+            }
+        }
+
+        public string GetTopicArnFor(string topicName)
+        {
+            return _snsTopics.GetOrAdd(topicName, GetTopicArn);
+        }
+
+        private string GetTopicArn(string topicName)
+        {
+            using (var client = new AmazonSimpleNotificationServiceClient(_credentials, _regionEndpoint))
+            {
+                var topic = client.FindTopic(topicName);
+
+                if (topic != null)
+                    return topic.TopicArn;
+
+                var response = client.CreateTopic(topicName);
+                return response?.TopicArn;
             }
         }
     }
