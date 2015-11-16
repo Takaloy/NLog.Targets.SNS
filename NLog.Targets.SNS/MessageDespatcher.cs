@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Amazon;
@@ -7,7 +8,7 @@ using Amazon.SimpleNotificationService.Model;
 
 namespace NLog.Targets.SNS
 {
-    internal interface IMessageDespatcher
+    internal interface IMessageDespatcher : IDisposable
     {
         Task<PublishResponse> DespatchAsync(string topicArn, string message);
         string GetTopicArnFor(string topicName);
@@ -15,16 +16,16 @@ namespace NLog.Targets.SNS
 
     internal class MessageDespatcher : IMessageDespatcher
     {
+
         private readonly ConcurrentDictionary<string, string> _snsTopics =
             new ConcurrentDictionary<string, string>();
 
-        private readonly AWSCredentials _credentials;
-        private readonly RegionEndpoint _regionEndpoint;
+        private AmazonSimpleNotificationServiceClient _client;
 
         public MessageDespatcher(AWSCredentials credentials, string regionEndpointString)
         {
-            _credentials = credentials;
-            _regionEndpoint = RegionEndpoint.GetBySystemName(regionEndpointString);
+            _client = new AmazonSimpleNotificationServiceClient(credentials, 
+                RegionEndpoint.GetBySystemName(regionEndpointString));
         }
 
         public async Task<PublishResponse> DespatchAsync(string topicArn, string message)
@@ -34,12 +35,10 @@ namespace NLog.Targets.SNS
                 return new PublishResponse(); //do not proceed
             }
 
-            using (var client = new AmazonSimpleNotificationServiceClient(_credentials, _regionEndpoint))
-            {
-                var request = new PublishRequest(topicArn, message);
-                var response = await client.PublishAsync(request);
-                return response;
-            }
+
+            var request = new PublishRequest(topicArn, message);
+            var response = await _client.PublishAsync(request);
+            return response;
         }
 
         public string GetTopicArnFor(string topicName)
@@ -47,18 +46,35 @@ namespace NLog.Targets.SNS
             return _snsTopics.GetOrAdd(topicName, GetTopicArn);
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         private string GetTopicArn(string topicName)
         {
-            using (var client = new AmazonSimpleNotificationServiceClient(_credentials, _regionEndpoint))
-            {
-                var topic = client.FindTopic(topicName);
+            var topic = _client.FindTopic(topicName);
 
-                if (topic != null)
-                    return topic.TopicArn;
+            if (topic != null)
+                return topic.TopicArn;
 
-                var response = client.CreateTopic(topicName);
-                return response?.TopicArn;
-            }
+            var response = _client.CreateTopic(topicName);
+            return response?.TopicArn;
+        }
+
+        ~MessageDespatcher()
+        {
+            Dispose(false);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing) return;
+
+            if (_client == null) return;
+            _client.Dispose();
+            _client = null;
         }
     }
 }

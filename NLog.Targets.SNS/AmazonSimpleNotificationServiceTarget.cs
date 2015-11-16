@@ -58,5 +58,19 @@ namespace NLog.Targets.SNS
             var message = Layout.Render(logEvent);
             _messageDespatcher.DespatchAsync(GetTopicArn(), message).ConfigureAwait(false).GetAwaiter().GetResult();
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_messageDespatcher != null)
+                {
+                    _messageDespatcher.Dispose();
+                    _messageDespatcher = null;
+                }
+            }
+
+            base.Dispose(disposing);
+        }
     }
 }
