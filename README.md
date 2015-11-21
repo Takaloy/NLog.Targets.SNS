@@ -9,7 +9,7 @@ License: [MIT](https://opensource.org/licenses/MIT "MIT License").
 
 specify topic arn explicitly
 
-```json
+```xml
 <target xsi:type="SNS" 
             name="s" 
             RegionEndpoint ="eu-west-1"
@@ -23,7 +23,7 @@ work out topic by convention.
 $"arn:aws:sns:{RegionEndPoint}:{AccountNumber}:{Topic}"
 ```
 
-```json
+```xml
 <target xsi:type="SNS"
             name="s"
             RegionEndpoint ="eu-west-1"
@@ -34,7 +34,8 @@ $"arn:aws:sns:{RegionEndPoint}:{AccountNumber}:{Topic}"
 ```
 
 posting from and to the same aws, specifying account number is optional. target will try and discover it on your behalf.
-```json
+
+```xml
 <target xsi:type="SNS"
             name="s"
             RegionEndpoint ="eu-west-1"
@@ -46,7 +47,7 @@ posting from and to the same aws, specifying account number is optional. target 
 
 basic aws credentials with accesskey and secretkey
 
-```json
+```xml
 <target xsi:type="SNS"
             name="s"
             RegionEndpoint ="eu-west-1"
