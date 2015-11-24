@@ -1,8 +1,11 @@
 # NLog.Targets.SNS
+
 NLog target for Amazon SNS. This target will publish to specified Amazon SNS. For more information about Targets, read [here](https://github.com/NLog/NLog/wiki/Targets "NLog Targets").
 
+License: [MIT](https://raw.githubusercontent.com/Takaloy/NLog.Targets.SNS/master/LICENSE).
 
-License: [MIT](https://opensource.org/licenses/MIT "MIT License").
+[![Build status](https://ci.appveyor.com/api/projects/status/v96402hp71igqyrq/branch/master?svg=true)](https://ci.appveyor.com/project/Takaloy/nlog-targets-sns/branch/master)
+[![Version](https://img.shields.io/nuget/v/NLog.Targets.SNS.svg)](https://www.nuget.org/packages/NLog.Targets.SNS)
 
 
 ### Example Config
