@@ -17,7 +17,7 @@ specify topic arn explicitly
             name="s" 
             RegionEndpoint ="eu-west-1"
             TopicArn ="arn:aws:sns:eu-west-1:{your-account-number}:{your-topic}"
-            AmazonCredentialType="Amazon.Runtime.StoredProfileAWSCredentials, AWSSDK"
+            AmazonCredentialType="Amazon.Runtime.StoredProfileAWSCredentials, AWSSDK.Core"
             layout="${message}"/>
 ```
 
@@ -32,7 +32,7 @@ $"arn:aws:sns:{RegionEndPoint}:{AccountNumber}:{Topic}"
             RegionEndpoint ="eu-west-1"
             AccountNumber="{your-account-number}"
             Topic="{your-topic}"
-            AmazonCredentialType="Amazon.Runtime.StoredProfileAWSCredentials, AWSSDK"
+            AmazonCredentialType="Amazon.Runtime.StoredProfileAWSCredentials, AWSSDK.Core"
             layout="${message}"/>
 ```
 
@@ -44,7 +44,7 @@ posting from and to the same aws, specifying account number is optional. target 
             RegionEndpoint ="eu-west-1"
             AccountNumber="{your-account-number}"
             Topic="{your-topic}"
-            AmazonCredentialType="Amazon.Runtime.StoredProfileAWSCredentials, AWSSDK"
+            AmazonCredentialType="Amazon.Runtime.StoredProfileAWSCredentials, AWSSDK.Core"
             layout="${message}"/>
 ```
 
