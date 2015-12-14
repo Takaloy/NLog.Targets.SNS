@@ -16,11 +16,12 @@
 		<dependencies>
 			<group targetFramework="net45">
 				<dependency id="NLog" version="4.2.0" />
+				<dependency id="AWSSDK.SimpleNotificationService" version="3.1.0.3" />
+				<dependency id="AWSSDK.Core" version="3.1.4.0" />
 			</group>
 		</dependencies>
     </metadata>  
     <files>
-        <file src="..\NLog.Targets.SNS\bin\Release\NLog.Targets.SNS.dll" target="lib\net45" />
-		<file src="..\NLog.Targets.SNS\bin\Release\AWSSDK.dll" target="lib\net45" />
+        <file src="..\NLog.Targets.SNS\bin\Release\NLog.Targets.SNS.dll" target="lib\net45" />		
     </files>	
 </package>
