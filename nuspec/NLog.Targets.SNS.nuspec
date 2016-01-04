@@ -9,7 +9,8 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>NLog Targets SNS</description>
 		<projectUrl>https://github.com/Takaloy/NLog.Targets.SNS</projectUrl>
-		<licenseUrl>https://github.com/Takaloy/NLog.Targets.SNS/blob/master/LICENSE</licenseUrl>
+		<licenseUrl>https://raw.githubusercontent.com/Takaloy/NLog.Targets.SNS/master/LICENSE</licenseUrl>
+		<iconUrl>https://raw.githubusercontent.com/Takaloy/NLog.Targets.SNS/master/nlogtargetssns.png</iconUrl>
         <releaseNotes></releaseNotes>
         <copyright>Copyright 2015</copyright>
         <tags>NLog targets AWS SNS</tags>		
