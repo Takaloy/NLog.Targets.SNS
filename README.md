@@ -61,4 +61,8 @@ basic aws credentials with accesskey and secretkey
             layout="${message}"/>
 ```
 
+## Difference between major version 1 and major version 2
+Version 1 works with AWSSDK version 2+ which is the older consolidated version of all Amazon's SDK.
+Version 2 utlise AWSSDK.SQS subsection version 3. The namespsaces are different.
+If you're not already using AWSSDK of a specific version, then the advice is to use major version 2+
 
