@@ -21,6 +21,19 @@ specify topic arn explicitly
             layout="${message}"/>
 ```
 
+specify topic and tokens for IAM account 
+
+```xml
+    <target xsi:type="SNS"
+            name="s"
+            RegionEndpoint ="us-west-1"
+            AccessKey="[AccessKey]"
+            SecretKey="[SecretKey]"
+            TopicArn ="arn:aws:sns:us-west-1:{your-account-number}:{your-topic}"
+            AmazonCredentialType="Amazon.Runtime.BasicAWSCredentials, AWSSDK.Core"
+            layout="${message}"/>
+```
+
 work out topic by convention. 
 ```
 $"arn:aws:sns:{RegionEndPoint}:{AccountNumber}:{Topic}"
@@ -61,10 +74,6 @@ basic aws credentials with accesskey and secretkey
             layout="${message}"/>
 ```
 
-## Difference between major version 1 and major version 2
-Version 1 works with AWSSDK version 2+ which is the older consolidated version of all Amazon's SDK.
-
-Version 2 utlise AWSSDK.SQS subsection version 3. The namespsaces are different.
-
-If you're not already using AWSSDK of a specific version, then the advice is to use major version 2+
+## Version 3
+Moved to netstandard2, new project format, Async Nlog (WriteAsyncTask instead of Write in Target) 
 
