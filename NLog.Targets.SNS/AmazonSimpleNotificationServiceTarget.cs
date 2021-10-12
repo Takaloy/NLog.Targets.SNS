@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using NLog.Config;
 
 namespace NLog.Targets.SNS
 {
     [Target("SNS")]
-    public class AmazonSimpleNotificationServiceTarget : TargetWithLayout
+    public class AmazonSimpleNotificationServiceTarget : AsyncTaskTarget
     {
         private readonly IAwsCredentialResolver _awsCredentialResolver;
         private IMessageDespatcher _messageDespatcher;
@@ -36,7 +38,7 @@ namespace NLog.Targets.SNS
             _messageDespatcher = new MessageDespatcher(credential, RegionEndPoint);
         }
 
-        private string GetTopicArn()
+        private async Task<string> GetTopicArn()
         {
             if (!string.IsNullOrEmpty(TopicArn))
                 return TopicArn;
@@ -45,12 +47,12 @@ namespace NLog.Targets.SNS
                 return null;
 
             if (string.IsNullOrEmpty(AccountNumber))
-                return _messageDespatcher.GetTopicArnFor(Topic);
+                return await _messageDespatcher.GetTopicArnFor(Topic).ConfigureAwait(false);
 
             return $"arn:aws:sns:{RegionEndPoint}:{AccountNumber}:{Topic}";
         }
 
-        protected override void Write(LogEventInfo logEvent)
+        protected override async Task WriteAsyncTask(LogEventInfo logEvent, CancellationToken cancellationToken)
         {
             if (_messageDespatcher == null)
                 throw new ArgumentNullException(nameof(_messageDespatcher));
@@ -59,7 +61,8 @@ namespace NLog.Targets.SNS
                 return;
 
             var message = Layout.Render(logEvent);
-            _messageDespatcher.DespatchAsync(GetTopicArn(), message).ConfigureAwait(false).GetAwaiter().GetResult();
+            var arn = await GetTopicArn().ConfigureAwait(false);
+            _messageDespatcher.DespatchAsync(arn, message).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
         protected override void Dispose(bool disposing)

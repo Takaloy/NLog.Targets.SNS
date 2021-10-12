@@ -1,16 +1,14 @@
-﻿using System.Threading;
-using NUnit.Framework;
+﻿using Xunit;
 
 namespace NLog.Targets.SNS.Tests
 {
-    [TestFixture]
     public class AmazonSimpleNotificationServiceTargetTests
     {
-        [Test]
+        [Fact]
         public void Test()
         {
             var logger = LogManager.GetCurrentClassLogger();
-            logger.Info("hello world");
+             logger.Info("hello world");
         }
     }
 }
