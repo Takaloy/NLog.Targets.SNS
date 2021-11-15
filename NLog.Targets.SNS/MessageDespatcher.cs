@@ -11,7 +11,7 @@ namespace NLog.Targets.SNS
     internal interface IMessageDespatcher : IDisposable
     {
         Task<PublishResponse> DespatchAsync(string topicArn, string message);
-        string GetTopicArnFor(string topicName);
+        Task<string> GetTopicArnFor(string topicName);
     }
 
     internal class MessageDespatcher : IMessageDespatcher
@@ -35,13 +35,14 @@ namespace NLog.Targets.SNS
             }
 
             var request = new PublishRequest(topicArn, message);
-            var response = await _client.PublishAsync(request);
+            var response = await _client.PublishAsync(request).ConfigureAwait(false);
             return response;
         }
 
-        public string GetTopicArnFor(string topicName)
+        public async Task<string> GetTopicArnFor(string topicName)
         {
-            return _snsTopics.GetOrAdd(topicName, GetTopicArn);
+            var arn = await GetTopicArn(topicName).ConfigureAwait(false);
+            return _snsTopics.GetOrAdd(topicName, arn);
         }
 
         public void Dispose()
@@ -50,14 +51,14 @@ namespace NLog.Targets.SNS
             GC.SuppressFinalize(this);
         }
 
-        private string GetTopicArn(string topicName)
+        private async Task<string> GetTopicArn(string topicName)
         {
-            var topic = _client.FindTopic(topicName);
+            var topic = await _client.FindTopicAsync(topicName).ConfigureAwait(false);
 
             if (topic != null)
                 return topic.TopicArn;
 
-            var response = _client.CreateTopic(topicName);
+            var response = await _client.CreateTopicAsync(topicName).ConfigureAwait(false);
             return response?.TopicArn;
         }
 
